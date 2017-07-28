@@ -24,7 +24,7 @@ router.post('/', function(req, res){
 
 router.get('/:userId', function(req, res){
   db.connectDB()
-  .then( () => wiUser.getUser(req.params, data))
+  .then( () => wiUser.getUser(req.params))
   .then( user => {
     response.responseStatus = RESP.SUCCESS;
     response.responseMessage = RESP.SUCCESS
