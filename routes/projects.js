@@ -31,8 +31,7 @@ router.post('/', function(req, res){
 
 router.post('/:projectId/member', function(req, res){
   db.connectDB()
-    .then( () => wiUser.getUserById(req.body.userId))
-    .then( (user) => wiProject.addMember(req.params.projectId, user))
+    .then( () => wiProject.addMember(req.params.projectId, req.body.userId))
     .then( (project) => {
       response.responseStatus = RESP.SUCCESS
       response.responseMessage = "Successfully added"
@@ -46,17 +45,14 @@ router.post('/:projectId/member', function(req, res){
   })
 });
 
-router.delete('/:projectId/subscribe/email', function(req, res){
-  // console.log(req)
-  connectDB()
-    .then( data => awProject.deleteEmailSubcriber(req.params.projectId, req.query.email))
+router.delete('/:projectId/member', function(req, res){
+  db.connectDB()
+    .then( () => wiProject.deleteMember(req.params.projectId, req.query.userId))
     .then( (data) => {
       response.responseStatus = data.status
       response.responseMessage = data.msg
       response.data = null
-      log.info(response)
       res.json(response)
-      // updateSchedule(project)
     }).catch( function (error) {
     console.error(error)
     response.responseStatus = RESP.FAIL;
