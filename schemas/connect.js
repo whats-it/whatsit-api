@@ -7,6 +7,8 @@ var connectSchema = new Schema({
   accessToken: String,
   accessKeyId: String,
   accessKeySecret: String,
+  sourceBucket: String,
+  destBucket: String
 });
 
 module.exports = connectSchema;

@@ -8,7 +8,7 @@ var projectSchema = new Schema({
   name: String,
   owner: User,
   member: [ObjectId],
-  connectSrc: Connect
+  connect: Connect
 });
 
 

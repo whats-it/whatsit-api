@@ -80,6 +80,22 @@ router.put('/:projectId', function(req, res){
   })
 });
 
+router.put('/:projectId/connect', function(req, res){
+  db.connectDB()
+    .then( () => wiProject.updateConnect(req.params.projectId, req.body))
+    .then( (project) => {
+      response.responseStatus = RESP.SUCCESS;
+      response.responseMessage = "Successfully updated"
+      response.data = project
+      res.json(response)
+    }).catch( function (error) {
+    console.error(error)
+    response.responseStatus = RESP.FAIL;
+    response.responseMessage = error;
+    res.json(response)
+  })
+});
+
 router.get('/:projectId', function(req, res){
   console.log(req.params.projectId)
   db.connectDB()
