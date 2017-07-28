@@ -29,17 +29,15 @@ router.post('/', function(req, res){
     })
 });
 
-router.post('/:projectId/subscribe/email', function(req, res){
-  // console.log(req)
+router.post('/:projectId/member', function(req, res){
   db.connectDB()
-    .then( data => awProject.addEmailSubcriber(req.params.projectId, req.body.email))
+    .then( () => wiUser.getUserById(req.body.userId))
+    .then( (user) => wiProject.addMember(req.params.projectId, user))
     .then( (project) => {
       response.responseStatus = RESP.SUCCESS
       response.responseMessage = "Successfully added"
       response.data = project
-      log.info(response)
       res.json(response)
-      // updateSchedule(project)
     }).catch( function (error) {
     console.error(error)
     response.responseStatus = RESP.FAIL;
