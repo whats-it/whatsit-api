@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors')
 
-var oauth = require('./routes/oauth');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var projects = require('./routes/projects');
@@ -29,7 +28,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors())
 
-app.use('/auth', oauth);
 app.use('/users', users);
 app.use('/projects', projects);
 app.use('/instances', instances);

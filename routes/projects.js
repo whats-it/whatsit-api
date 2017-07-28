@@ -20,6 +20,7 @@ router.post('/', function(req, res){
     .then( data => getUser(req.body, data))
     .then( data => createProject(data))
     .then( (project) => {
+      response.responseStatus = RESP.SUCCESS;
       response.responseMessage = RESP.SUCCESS
       response.data = project
       log.info(response)
