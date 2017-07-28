@@ -118,13 +118,13 @@ router.delete('/:projectId', function(req, res){
 });
 
 router.get('/users/:userId', function(req, res){
-  console.log(req.params)
-  connectDB()
-    .then( data => getProjectsByUserId(req.params, data))
-  .then( (projects) => {
-    response.responseMessage = RESP.SUCCESS
-    response.data = {
-      projects: projects
+  db.connectDB()
+    .then( () => wiProject.getProjectsByUserId(req.params.userId))
+    .then( (projects) => {
+      response.responseStatus = RESP.SUCCESS
+      response.responseMessage = RESP.SUCCESS
+      response.data = {
+        projects: projects
     }
     res.json(response)
   }).catch( function (error) {
@@ -147,23 +147,6 @@ function deleteInstancesByProjectId (projectId) {
       }
       resolve()
     });
-  })
-}
-
-function getProjectsByUserId (data) {
-  return new Promise((resolve, reject) => {
-    console.log('.....' + JSON.stringify(data))
-      Project.find(
-      {"owner": data.userId},
-      function(err, projects) {
-        if (err) {
-          console.error(err)
-          reject(err)
-        }
-        console.log(projects)
-        resolve(projects)
-      }
-    )
   })
 }
 
