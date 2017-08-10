@@ -82,7 +82,7 @@ router.put('/:projectId', function(req, res){
 
 router.put('/:projectId/connect', function(req, res){
   db.connectDB()
-    .then( () => wiProject.updateConnect(req.params.projectId, req.body))
+    .then( () => wiProject.updateConnectS3(req.params.projectId, req.body))
     .then( (project) => {
       response.responseStatus = RESP.SUCCESS;
       response.responseMessage = "Successfully updated"

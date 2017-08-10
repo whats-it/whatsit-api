@@ -1,14 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var Mixed = Schema.Types.Mixed;
 var User = require('./user');
-var Connect = require('./connect');
 
 var projectSchema = new Schema({
   name: String,
   owner: User,
   member: [ObjectId],
-  connect: Connect
+  connect: Mixed
 });
 
 
