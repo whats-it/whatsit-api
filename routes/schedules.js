@@ -1,6 +1,5 @@
 var express = require('express')
 var router = express.Router();
-var AwPubSub = require('whatsit-pubsub')
 var bunyan = require('bunyan')
 var db = require('../utils/db')
 var Response = require('../utils/response');
@@ -11,9 +10,9 @@ var Schedule = require('../models/schedule');
 var User = require('../models/user');
 var schedule = require('../lib/schedule')
 var scheduler = require('../lib/scheduler')
+// var AwPubSub = require('whatsit-pubsub')
 
 let log = bunyan.createLogger({name:'whatsit-api', module: 'router:schedule'})
-
 
 router.post('/', function(req, res){
   // console.log(req)
@@ -241,7 +240,7 @@ function connectDB () {
 // function createSchedule (project) {
 //   let awPubSub = new AwPubSub()
 //   console.log(project)
-//   awPubSub.publish('whatsit/schedule/create', JSON.stringify(project)).then(() => {
+//   awPubSub.nrp.emit('whatsit/schedule/create', JSON.stringify(project)).then(() => {
 //     log.info('createSchedule done')
 //   })
 // }
@@ -249,7 +248,7 @@ function connectDB () {
 // function updateSchedule (project) {
 //   let awPubSub = new AwPubSub()
 //   console.log(project)
-//   awPubSub.publish('whatsit/schedule/update', JSON.stringify(project)).then(() => {
+//   awPubSub.nrp.emit('whatsit/schedule/update', JSON.stringify(project)).then(() => {
 //     log.info('updateSchedule done')
 //   })
 // }

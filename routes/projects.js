@@ -11,6 +11,8 @@ var Instance = require('../models/instance');
 var schedule = require('../lib/schedule')
 var wiProject = require('../lib/project')
 var wiUser = require('../lib/user')
+var AwPubSub = require('whatsit-pubsub')
+
 
 router.post('/', function(req, res){
     db.connectDB()
@@ -80,14 +82,20 @@ router.put('/:projectId', function(req, res){
   })
 });
 
-router.put('/:projectId/connect', function(req, res){
+router.put('/:projectId/connect/:connectionName', function(req, res){
   db.connectDB()
     .then( () => wiProject.updateConnectS3(req.params.projectId, req.body))
     .then( (project) => {
       response.responseStatus = RESP.SUCCESS;
       response.responseMessage = "Successfully updated"
       response.data = project
-      res.json(response)
+
+        if (req.params.connectionName != null) {
+            var connectionName = req.params.connectionName;
+            console.log('connectionName => ' + connectionName);
+            pubCreateImageIndex(connectionName, project);
+        }
+        res.json(response)
     }).catch( function (error) {
     console.error(error)
     response.responseStatus = RESP.FAIL;
@@ -95,6 +103,11 @@ router.put('/:projectId/connect', function(req, res){
     res.json(response)
   })
 });
+function pubCreateImageIndex (connectionName, project) {
+    let awPubSub = new AwPubSub()
+    console.log('pubCreateSchedule =>' + project)
+    awPubSub.nrp.emit('whatsit/schedule/connect:'+connectionName, JSON.stringify({ schedule: project }))
+}
 
 router.get('/:projectId', function(req, res){
   console.log(req.params.projectId)

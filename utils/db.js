@@ -1,8 +1,8 @@
 var Promise = require('promise');
 var mongoose = require('mongoose');
 var config = require('../config.json')
-var MONGODB_URL = config.db.MONGODB_URL_DEV;
-// var MONGODB_URL = config.db.MONGODB_URL;
+// var MONGODB_URL = config.db.MONGODB_URL_DEV;
+var MONGODB_URL = config.db.MONGODB_URL;
 var DB_FILE = config.db.DB;
 var DB_URI = 'mongodb://' + MONGODB_URL + '/' + DB_FILE;
 
@@ -17,7 +17,7 @@ function connect () {
       resolve(mongoose.connection)
     } else {
       console.log('new connection')
-      mongoose.connect(DB_URI, {useMongoClient: true})
+      mongoose.connect(DB_URI)
         .then( (connection) => {
           resolve(connection)
         })

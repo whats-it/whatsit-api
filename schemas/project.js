@@ -4,11 +4,13 @@ var ObjectId = Schema.Types.ObjectId;
 var Mixed = Schema.Types.Mixed;
 var User = require('./user');
 
+
 var projectSchema = new Schema({
   name: String,
   owner: User,
   member: [ObjectId],
-  connect: Mixed
+  connect: Mixed,
+  images: [ObjectId] //프로젝트별 rawlmage(사진한장) 리스트
 });
 
 

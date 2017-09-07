@@ -5,7 +5,6 @@ var spawn = require('child_process').spawn
 var fs = require('fs');
 var moment = require('moment')
 var bunyan = require('bunyan')
-var AwPubSub = require('whatsit-pubsub')
 var db = require('../utils/db')
 var Response = require('../utils/response');
 var RESP = require('../utils/response_values');
@@ -16,6 +15,8 @@ var User = require('../models/user');
 var tcRunnerConfig = require('../config/whatsit-job.json')
 var config = require('../config.json')
 var TC_RUNNER_PREFIX = 'whatsit-job-'
+var AwPubSub = require('whatsit-pubsub')
+
 
 let log = bunyan.createLogger({name:'whatsit-api', module: 'instance'})
 
@@ -150,7 +151,7 @@ function sendNotification (instance, data) {
         subscriber: project.subscriber
       }
       console.log(message)
-      awPubSub.publish('whatsit/smtp', JSON.stringify(message)).then(() => {
+      awPubSub.nrp.emit('whatsit/smtp', JSON.stringify(message)).then(() => {
         log.info('sendNotification done')
       })
     })
