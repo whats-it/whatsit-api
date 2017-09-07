@@ -13,6 +13,7 @@ var instances = require('./routes/instance');
 var schedules = require('./routes/schedules');
 var schedulers = require('./routes/schedulers');
 var timelines = require('./routes/timeline');
+var images = require('./routes/images');
 
 var app = express();
 
@@ -28,12 +29,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors())
 
+app.use('/', index);
 app.use('/users', users);
 app.use('/projects', projects);
 app.use('/instances', instances);
 app.use('/schedules', schedules);
 app.use('/schedulers', schedulers);
 app.use('/timelines', timelines);
+app.use('/images', images);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

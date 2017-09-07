@@ -8,8 +8,8 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80
+      targetPort: 3000
       protocol: TCP
   selector:
     name: whatsit-api
@@ -31,4 +31,5 @@ spec:
       - image: gcr.io/whatsit-174908/whatsit-api:latest
         name: whatsit-api
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
+          name: http-server
