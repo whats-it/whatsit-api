@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 var objectSchema = new Schema({
   label: String,
   type: String, //polygon, circle(include ellipse)
+  tags: [String],
   pose: {
     type: String, //Unspecified, Left, Right, Frontal, Rear
     default: "Unspecified"
