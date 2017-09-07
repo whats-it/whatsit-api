@@ -11,7 +11,8 @@ var projectSchema = new Schema({
   thumbnail: String, //Thumbnail image url
   status: String, //Preparing, Live, Stop
   member: [ObjectId],
-  datasets: [ObjectId] //[Dataset]
+  datasets: [ObjectId], //[Dataset]
+  exports: [ObjectId]
 });
 
 
