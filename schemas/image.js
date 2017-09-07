@@ -7,7 +7,10 @@ var imageSchema = new Schema({
   uri: String,
   labels: [String],
   objects: [Object],
-  segmented: Number,
+  segmented: {
+    type: Number,
+    default: 0
+  },
   checkedCount: Number
 });
 
