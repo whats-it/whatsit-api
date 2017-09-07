@@ -3,11 +3,12 @@ var Schema = mongoose.Schema;
 
 var datasetSchema = new Schema({
   name: String,
+  desc: String,
   thumbnail: String, //Thumbnail image url
   status: String, //Preparing, Live, Stop
   type: String, //g-spreadsheet, video
-  member: [ObjectId], //[User]
-  data: [ObjectId] // image or video
+  // member: [ObjectId], //[User]
+  data: [ObjectId] // image, video //or dicom
 });
 
 module.exports = datasetSchema;

@@ -6,6 +6,7 @@ var User = require('./user');
 
 var projectSchema = new Schema({
   name: String,
+  desc: String,
   owner: User,
   thumbnail: String, //Thumbnail image url
   status: String, //Preparing, Live, Stop
