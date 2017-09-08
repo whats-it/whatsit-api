@@ -1,16 +1,18 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-var Mixed = Schema.Types.Mixed;
 var User = require('./user');
 
 
 var projectSchema = new Schema({
   name: String,
+  desc: String,
   owner: User,
+  thumbnail: String, //Thumbnail image url
+  status: String, //preparing, live, stop
   member: [ObjectId],
-  connect: Mixed,
-  images: [ObjectId] //프로젝트별 rawlmage(사진한장) 리스트
+  datasets: [ObjectId], //[Dataset]
+  exports: [ObjectId]
 });
 
 
