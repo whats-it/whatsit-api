@@ -9,7 +9,7 @@ var projectSchema = new Schema({
   desc: String,
   owner: User,
   thumbnail: String, //Thumbnail image url
-  status: String, //Preparing, Live, Stop
+  status: String, //preparing, live, stop
   member: [ObjectId],
   datasets: [ObjectId], //[Dataset]
   exports: [ObjectId]
