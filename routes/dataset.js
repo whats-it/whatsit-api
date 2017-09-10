@@ -38,7 +38,7 @@ router.post('/', function (req, res) {
     .then( () => wiDataset.addDataset(req.body))
     .then( (result) => {
       response.responseStatus = RESP.SUCCESS
-      response.responseMessage = "Successfully Save"
+      response.responseMessage = "Successfully Saved"
       response.data = result
       res.json(response)
     }).catch( function (error) {
