@@ -5,8 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors')
-
-var index = require('./routes/index');
 var users = require('./routes/users');
 var projects = require('./routes/projects');
 var instances = require('./routes/instance');
@@ -14,6 +12,8 @@ var schedules = require('./routes/schedules');
 var schedulers = require('./routes/schedulers');
 var timelines = require('./routes/timeline');
 var images = require('./routes/images');
+var datasets = require('./routes/dataset');
+var index = require('./routes/index');
 
 var app = express();
 
@@ -29,7 +29,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors())
 
-app.use('/', index);
 app.use('/users', users);
 app.use('/projects', projects);
 app.use('/instances', instances);
@@ -37,6 +36,8 @@ app.use('/schedules', schedules);
 app.use('/schedulers', schedulers);
 app.use('/timelines', timelines);
 app.use('/images', images);
+app.use('/datasets', datasets);
+app.use('/', index);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
