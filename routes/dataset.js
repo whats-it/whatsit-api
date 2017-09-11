@@ -5,6 +5,7 @@ var Response = require('../utils/response');
 var RESP = require('../utils/response_values');
 var response = new Response();
 var wiDataset = require('../lib/dataset');
+var AwPubSub = require('whatsit-pubsub')
 
 router.get('/projects/:projectId', function(req, res) {
   var projectId = req.params.projectId;
@@ -40,6 +41,11 @@ router.post('/', function (req, res) {
       response.responseStatus = RESP.SUCCESS
       response.responseMessage = "Successfully Saved"
       response.data = result
+
+      let awPubSub = new AwPubSub()
+      console.log('publish :whatsit/index/video');
+      awPubSub.nrp.emit('whatsit/index/video', JSON.stringify(result));
+
       res.json(response)
     }).catch( function (error) {
     console.error(error)
