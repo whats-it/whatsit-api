@@ -56,7 +56,7 @@ router.get('/users/:userId/projects/:projectId', function(req, res) {
 router.post('/', function (req, res) {
   db.connectDB()
     .then( () => wiImage.setImages(req.body))
-    .then( () => wiImage.updateUsermarkingCount(req.body.userId))
+    //.then( () => wiImage.updateUsermarkingCount(req.body.userId))
     .then( (result) => {
       response.responseStatus = RESP.SUCCESS
       response.responseMessage = "Successfully Save"

@@ -7,8 +7,8 @@ var response = new Response();
 var wiDataset = require('../lib/dataset');
 var AwPubSub = require('whatsit-pubsub')
 
-router.get('/projects/:projectId', function(req, res) {
-  var projectId = req.params.projectId;
+router.get('/', function(req, res) {
+  var projectId = req.query.projectId;
   console.log('projectId =>' + projectId);
 
   if (projectId == null ||
@@ -25,6 +25,33 @@ router.get('/projects/:projectId', function(req, res) {
       response.data = {
         Datasets: datasets
       }
+      res.json(response)
+    }).catch( function (error) {
+    console.error(error)
+    response.responseStatus = RESP.FAIL;
+    response.responseMessage = error;
+    res.json(response)
+  })
+});
+
+router.get('/:datasetId', function(req, res) {
+  var datasetId = req.params.datasetId;
+  var projectId = req.query.projectId;
+  console.log('datasetId =>' + datasetId);
+  console.log('projectId =>' + projectId);
+
+  if (datasetId == null ||
+    datasetId == undefined) {
+
+    res.status(400).send('datasetId is invalid');
+  }
+
+  db.connectDB()
+    .then( () => wiDataset.getDatasetByDatasetId(datasetId))
+    .then( (dataset) => {
+      response.responseStatus = RESP.SUCCESS
+      response.responseMessage = RESP.SUCCESS
+      response.data = dataset;
       res.json(response)
     }).catch( function (error) {
     console.error(error)

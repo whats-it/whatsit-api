@@ -15,6 +15,10 @@ var AwPubSub = require('whatsit-pubsub')
 
 
 router.post('/', function(req, res){
+
+    /**
+     * TODO : checked user project duplication
+     * */
     db.connectDB()
     .then( () => wiUser.getUserById(req.body.owner))
     .then( user => wiProject.createProject(user, req.body))
@@ -140,9 +144,11 @@ router.delete('/:projectId', function(req, res){
   })
 });
 
-router.get('/users/:userId', function(req, res){
+router.get('/', function(req, res){
+
+  var userId = req.query.userId;
   db.connectDB()
-    .then( () => wiProject.getProjectsByUserId(req.params.userId))
+    .then( () => wiProject.getProjectsByUserId(userId))
     .then( (projects) => {
       response.responseStatus = RESP.SUCCESS
       response.responseMessage = RESP.SUCCESS
