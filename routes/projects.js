@@ -20,7 +20,7 @@ router.post('/', function(req, res){
      * TODO : checked user project duplication
      * */
     db.connectDB()
-    .then( () => wiUser.getUserById(req.body.owner))
+    .then( () => wiUser.getUserById(req.body.userId))
     .then( user => wiProject.createProject(user, req.body))
     .then( (project) => {
       response.responseStatus = RESP.SUCCESS;
