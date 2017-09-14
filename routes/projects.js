@@ -21,7 +21,7 @@ router.post('/', function(req, res){
      * */
     db.connectDB()
     .then( () => wiUser.getUserById(req.body.userId))
-    .then( user => wiProject.createProject(user._id, req.body))
+    .then( user => wiProject.createProject(user, req.body))
     .then( (project) => {
       response.responseStatus = RESP.SUCCESS;
       response.responseMessage = RESP.SUCCESS
