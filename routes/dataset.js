@@ -82,4 +82,23 @@ router.post('/', function (req, res) {
   })
 })
 
+router.put('/:datasetId', function (req, res) {
+  var datasetId = req.params.datasetId;
+
+  db.connectDB()
+    .then( () => wiDataset.getDatasetByDatasetId(datasetId))
+    .then( (video) => wiDataset.updateVideoByObjectId(video.data[0]._id, req.body))
+    .then( (result) => {
+      response.responseStatus = RESP.SUCCESS
+      response.responseMessage = RESP.SUCCESS
+      response.data = result;
+      res.json(response)
+    }).catch( function (error) {
+    console.error(error)
+    response.responseStatus = RESP.FAIL;
+    response.responseMessage = error;
+    res.json(response)
+  })
+})
+
 module.exports = router;
