@@ -85,9 +85,14 @@ router.post('/', function (req, res) {
 router.put('/:datasetId', function (req, res) {
   var datasetId = req.params.datasetId;
 
+  if (datasetId == null ||
+    datasetId == undefined) {
+
+    res.status(400).send('datasetId is invalid');
+  }
+
   db.connectDB()
-    .then( () => wiDataset.getDatasetByDatasetId(datasetId))
-    .then( (video) => wiDataset.updateVideoByObjectId(video.data[0]._id, req.body))
+    .then( () => wiDataset.updateDatasetByDatasetId(datasetId, req.body))
     .then( (result) => {
       response.responseStatus = RESP.SUCCESS
       response.responseMessage = RESP.SUCCESS

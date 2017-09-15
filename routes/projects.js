@@ -11,6 +11,7 @@ var Instance = require('../models/instance');
 var schedule = require('../lib/schedule')
 var wiProject = require('../lib/project')
 var wiUser = require('../lib/user')
+var wiDataset = require('../lib/dataset')
 var AwPubSub = require('whatsit-pubsub')
 
 
@@ -163,6 +164,41 @@ router.get('/', function(req, res){
     res.json(response)
   })
 });
+
+router.get('/:projectId/trainset', function (req, res) {
+
+  var projectId = req.params.projectId;
+  var format = req.query.format;
+
+  if (projectId == null ||
+    projectId == undefined) {
+
+    res.status(400).send('projectId is invalid');
+  }
+
+  db.connectDB()
+    .then( () => wiProject.getProjectByProjectId(projectId))
+    .then( (project) => wiDataset.allDatasetByProject(project))
+    .then( (result) => {
+
+      if (format == "pascalvoc") {
+
+        let awPubSub = new AwPubSub()
+        console.log('publish :whatsit/export/pascalvoc');
+        awPubSub.nrp.emit('whatsit/export/pascalvoc', JSON.stringify(result));
+      }
+      response.responseStatus = RESP.SUCCESS
+      response.responseMessage = RESP.SUCCESS
+      response.data = result
+      res.json(response)
+    }).catch( function (error) {
+    console.error(error)
+    response.responseStatus = RESP.FAIL;
+    response.responseMessage = error;
+    res.json(response)
+  })
+})
+
 
 function deleteInstancesByProjectId (projectId) {
   return new Promise((resolve, reject) => {
