@@ -6,79 +6,100 @@ var RESP = require('../utils/response_values');
 var response = new Response();
 var wiDataset = require('../lib/dataset');
 var AwPubSub = require('whatsit-pubsub')
+var AwResponse = require('../utils/AwResponse')
 
 router.get('/', function(req, res) {
-  var projectId = req.query.projectId;
-  console.log('projectId =>' + projectId);
 
-  if (projectId == null ||
-    projectId == undefined) {
+  if (Object.keys(req.query).length === 0) {
 
-    res.status(400).send('projectId is invalid');
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "checked request query";
+    res.json(awResponse.create())
+
+  } else {
+
+    var projectId = req.query.projectId;
+    console.log('projectId =>' + projectId);
+
+    if (projectId == null ||
+      projectId == undefined) {
+
+      var awResponse = new AwResponse();
+      awResponse.code = 400;
+      awResponse.message = "projectId is invalid";
+      res.json(awResponse.create())
+
+    } else {
+      db.connectDB()
+        .then( () => wiDataset.getDatasetsByProjectId(projectId))
+        .then( (datasets) => {
+          var awResponse = new AwResponse();
+          awResponse.code = 200;
+          awResponse.data = {Datasets: datasets};
+          res.json(awResponse.create())
+        }).catch( function (error) {
+        console.error(error)
+        var awResponse = new AwResponse();
+        awResponse.code = 500;
+        awResponse.message = error;
+        res.json(awResponse.create())
+      })
+    }
+
   }
 
-  db.connectDB()
-    .then( () => wiDataset.getDatasetsByProjectId(projectId))
-    .then( (datasets) => {
-      response.responseStatus = RESP.SUCCESS
-      response.responseMessage = RESP.SUCCESS
-      response.data = {
-        Datasets: datasets
-      }
-      res.json(response)
-    }).catch( function (error) {
-    console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
-  })
 });
 
 router.get('/:datasetId', function(req, res) {
   var datasetId = req.params.datasetId;
-  var projectId = req.query.projectId;
   console.log('datasetId =>' + datasetId);
-  console.log('projectId =>' + projectId);
 
   if (datasetId == null ||
     datasetId == undefined) {
 
-    res.status(400).send('datasetId is invalid');
-  }
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "datasetId is invalid";
+    res.json(awResponse.create())
+  } else {
+    db.connectDB()
+      .then( () => wiDataset.getDatasetByDatasetId(datasetId))
+      .then( (dataset) => {
 
-  db.connectDB()
-    .then( () => wiDataset.getDatasetByDatasetId(datasetId))
-    .then( (dataset) => {
-      response.responseStatus = RESP.SUCCESS
-      response.responseMessage = RESP.SUCCESS
-      response.data = dataset;
-      res.json(response)
-    }).catch( function (error) {
-    console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
-  })
+        var awResponse = new AwResponse();
+        awResponse.code = 200;
+        awResponse.data = dataset;
+        res.json(awResponse.create())
+
+      }).catch( function (error) {
+      console.error(error)
+      var awResponse = new AwResponse();
+      awResponse.code = 500;
+      awResponse.message = error;
+      res.json(awResponse.create())
+    })
+  }
 });
 
 router.post('/', function (req, res) {
   db.connectDB()
     .then( () => wiDataset.addDataset(req.body))
     .then( (result) => {
-      response.responseStatus = RESP.SUCCESS
-      response.responseMessage = "Successfully Saved"
-      response.data = result
-
       let awPubSub = new AwPubSub()
       console.log('publish :whatsit/index/video');
-      awPubSub.nrp.emit('whatsit/index/video', JSON.stringify(result));
+      awPubSub.nrp.emit('whatsit/index/video', JSON.stringify(result.datasetId));
 
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = result;
+      res.json(awResponse.create())
     }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 })
 
@@ -88,21 +109,25 @@ router.put('/:datasetId', function (req, res) {
   if (datasetId == null ||
     datasetId == undefined) {
 
-    res.status(400).send('datasetId is invalid');
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "datasetId is invalid";
+    res.json(awResponse.create())
   }
 
   db.connectDB()
     .then( () => wiDataset.updateDatasetByDatasetId(datasetId, req.body))
     .then( (result) => {
-      response.responseStatus = RESP.SUCCESS
-      response.responseMessage = RESP.SUCCESS
-      response.data = result;
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = result;
+      res.json(awResponse.create())
     }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 })
 
