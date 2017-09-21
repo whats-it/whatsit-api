@@ -1,9 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 
 var objectSchema = new Schema({
-  label: ObjectId, //  ObjectId of LabelItem(label_item.js)
+  label: String, //  ObjectId of LabelItem(label_item.js)
   type: String, //polygon, circle(include ellipse)
   pose: {
     type: String, //Unspecified, Left, Right, Frontal, Rear
