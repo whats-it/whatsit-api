@@ -13,3 +13,6 @@ gcloud container images list --repository=$HOSTNAME/$PROJECT_ID
 
 kubectl --namespace=$NAMESPACE set image deployment/$IMAGE $IMAGE=$HOSTNAME/$PROJECT_ID/$IMAGE:$TAG
 kubectl --namespace=$NAMESPACE rollout status deployment/$IMAGE
+
+#restart pod
+kubectl --namespace=$NAMESPACE delete pod -l name=$IMAGE

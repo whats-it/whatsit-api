@@ -3,7 +3,8 @@ var Schema = mongoose.Schema;
 
 var exportSchema = new Schema({
   createdAt: Number,
-  uri: String
+  uri: String,
+  format: String
 });
 
 module.exports = exportSchema;

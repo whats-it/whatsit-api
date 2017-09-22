@@ -11,8 +11,9 @@ var Instance = require('../models/instance');
 var schedule = require('../lib/schedule')
 var wiProject = require('../lib/project')
 var wiUser = require('../lib/user')
+var wiDataset = require('../lib/dataset')
 var AwPubSub = require('whatsit-pubsub')
-
+var AwResponse = require('../utils/AwResponse')
 
 router.post('/', function(req, res){
 
@@ -20,69 +21,111 @@ router.post('/', function(req, res){
      * TODO : checked user project duplication
      * */
     db.connectDB()
-    .then( () => wiUser.getUserById(req.body.owner))
+    .then( () => wiUser.getUserById(req.body.userId))
     .then( user => wiProject.createProject(user, req.body))
     .then( (project) => {
-      response.responseStatus = RESP.SUCCESS;
-      response.responseMessage = RESP.SUCCESS
-      response.data = project
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = project;
+      res.json(awResponse.create())
     }).catch( function (error) {
       console.error(error)
-      response.responseStatus = RESP.FAIL;
-      response.responseMessage = error;
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 500;
+      awResponse.message = error;
+      res.json(awResponse.create())
     })
 });
 
 router.post('/:projectId/member', function(req, res){
+
+  var projectId = req.params.projectId;
+  console.log('projectId =>' + projectId);
+
+  if (projectId == null ||
+    projectId == undefined) {
+
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "projectId is invalid";
+    res.json(awResponse.create())
+  }
+
   db.connectDB()
     .then( () => wiProject.addMember(req.params.projectId, req.body.userId))
     .then( (project) => {
-      response.responseStatus = RESP.SUCCESS
-      response.responseMessage = "Successfully added"
-      response.data = project
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = project;
+      res.json(awResponse.create())
     }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 });
 
 router.delete('/:projectId/member', function(req, res){
+
+  var projectId = req.params.projectId;
+  console.log('projectId =>' + projectId);
+
+  if (projectId == null ||
+    projectId == undefined) {
+
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "projectId is invalid";
+    res.json(awResponse.create())
+  }
+
   db.connectDB()
     .then( () => wiProject.deleteMember(req.params.projectId, req.query.userId))
     .then( (data) => {
-      response.responseStatus = data.status
-      response.responseMessage = data.msg
-      response.data = null
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.message = data.msg;
+      awResponse.data = null;
+      res.json(awResponse.create())
     }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 });
 
 
 router.put('/:projectId', function(req, res){
-  // console.log(req)
-  connectDB()
-    .then( data => awProject.updateProject(req.params.projectId, req.body))
+
+  var projectId = req.params.projectId;
+  console.log('projectId =>' + projectId);
+
+  if (projectId == null ||
+    projectId == undefined) {
+
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "projectId is invalid";
+    res.json(awResponse.create())
+  }
+  db.connectDB()
+    .then( () => wiProject.checkedProject(req.params.projectId, req.body))
     .then( (project) => {
-      response.responseMessage = "Successfully updated"
-      response.data = project
-      log.info(response)
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = project;
+      res.json(awResponse.create())
       // updateSchedule(project)
     }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 });
 
@@ -90,21 +133,23 @@ router.put('/:projectId/connect/:connectionName', function(req, res){
   db.connectDB()
     .then( () => wiProject.updateConnectS3(req.params.projectId, req.body))
     .then( (project) => {
-      response.responseStatus = RESP.SUCCESS;
-      response.responseMessage = "Successfully updated"
-      response.data = project
 
-        if (req.params.connectionName != null) {
-            var connectionName = req.params.connectionName;
-            console.log('connectionName => ' + connectionName);
-            pubCreateImageIndex(connectionName, project);
-        }
-        res.json(response)
+      if (req.params.connectionName != null) {
+        var connectionName = req.params.connectionName;
+        console.log('connectionName => ' + connectionName);
+        pubCreateImageIndex(connectionName, project);
+      }
+
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = project;
+      res.json(awResponse.create())
     }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 });
 function pubCreateImageIndex (connectionName, project) {
@@ -114,33 +159,62 @@ function pubCreateImageIndex (connectionName, project) {
 }
 
 router.get('/:projectId', function(req, res){
-  console.log(req.params.projectId)
+
+  var projectId = req.params.projectId;
+  console.log('projectId =>' + projectId);
+
+  if (projectId == null ||
+    projectId == undefined) {
+
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "projectId is invalid";
+    res.json(awResponse.create())
+  }
+
   db.connectDB()
   .then( () => wiProject.getProjectByProjectId(req.params.projectId))
   .then( (project) => {
-    response.responseMessage = RESP.SUCCESS
-    response.data = project
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 200;
+    awResponse.data = project;
+    res.json(awResponse.create())
   }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 });
 
 router.delete('/:projectId', function(req, res){
+
+  var projectId = req.params.projectId;
+  console.log('projectId =>' + projectId);
+
+  if (projectId == null ||
+    projectId == undefined) {
+
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "projectId is invalid";
+    res.json(awResponse.create())
+  }
+
   db.connectDB()
     .then( () => wiProject.deleteProjectByProjectId(req.params.projectId))
     .then( () => {
-      response.responseStatus = RESP.SUCCESS
-      response.responseMessage = `${req.params.projectId} is successfully deleted`
-      res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = {projectId:req.params.projectId};
+      res.json(awResponse.create())
     }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 });
 
@@ -150,19 +224,57 @@ router.get('/', function(req, res){
   db.connectDB()
     .then( () => wiProject.getProjectsByUserId(userId))
     .then( (projects) => {
-      response.responseStatus = RESP.SUCCESS
-      response.responseMessage = RESP.SUCCESS
-      response.data = {
-        projects: projects
-    }
-    res.json(response)
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = {projects: projects};
+      res.json(awResponse.create())
   }).catch( function (error) {
     console.error(error)
-    response.responseStatus = RESP.FAIL;
-    response.responseMessage = error;
-    res.json(response)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
   })
 });
+
+router.get('/:projectId/trainset', function (req, res) {
+
+  var projectId = req.params.projectId;
+  var format = req.query.format;
+
+  if (projectId == null ||
+    projectId == undefined) {
+
+    var awResponse = new AwResponse();
+    awResponse.code = 400;
+    awResponse.message = "projectId is invalid";
+    res.json(awResponse.create())
+  }
+
+  db.connectDB()
+    .then( () => wiProject.getProjectByProjectId(projectId))
+    .then( (project) => wiDataset.allDatasetByProject(project))
+    .then( (result) => {
+
+      if (format == "pascalvoc") {
+
+        let awPubSub = new AwPubSub()
+        console.log('publish :whatsit/export/pascalvoc =>' + projectId);
+        awPubSub.nrp.emit('whatsit/export/pascalvoc', projectId);
+      }
+      var awResponse = new AwResponse();
+      awResponse.code = 200;
+      awResponse.data = result;
+      res.json(awResponse.create())
+    }).catch( function (error) {
+    console.error(error)
+    var awResponse = new AwResponse();
+    awResponse.code = 500;
+    awResponse.message = error;
+    res.json(awResponse.create())
+  })
+})
+
 
 function deleteInstancesByProjectId (projectId) {
   return new Promise((resolve, reject) => {

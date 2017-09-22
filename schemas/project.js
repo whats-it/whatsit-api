@@ -12,7 +12,7 @@ var projectSchema = new Schema({
   status: String, //preparing, live, stop
   member: [ObjectId],
   datasets: [ObjectId], //[Dataset]
-  exports: [ObjectId],
+  exports: [ObjectId], //export schema
   label_map: ObjectId //LabelMap
 });
 

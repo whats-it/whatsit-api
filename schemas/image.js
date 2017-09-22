@@ -11,7 +11,9 @@ var imageSchema = new Schema({
     type: Number,
     default: 0
   },
-  checkedCount: Number
+  checkedCount: Number,
+  w: Number,
+  h: Number
 });
 
 module.exports = imageSchema
