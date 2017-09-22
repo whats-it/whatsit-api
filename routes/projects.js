@@ -259,8 +259,8 @@ router.get('/:projectId/trainset', function (req, res) {
       if (format == "pascalvoc") {
 
         let awPubSub = new AwPubSub()
-        console.log('publish :whatsit/export/pascalvoc');
-        awPubSub.nrp.emit('whatsit/export/pascalvoc', JSON.stringify(result));
+        console.log('publish :whatsit/export/pascalvoc =>' + projectId);
+        awPubSub.nrp.emit('whatsit/export/pascalvoc', projectId);
       }
       var awResponse = new AwResponse();
       awResponse.code = 200;
